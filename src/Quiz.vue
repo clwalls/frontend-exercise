@@ -1,19 +1,39 @@
 <template>
-  <div>
+  <div className="quiz">
     <h1>Quiz App</h1>
+    <h3>Hello, welcome to the Cognito Forms quiz!</h3>
+    <p>
+      To get started, click the 'Start quiz' button. You can't go back once
+      you've answered a question.
+    </p>
+    <br />
     <button v-if="!quizStarted" @click="start()">Start quiz</button>
     <div v-if="quizStarted">
       <div className="question">
         {{ this.prompts[questionNumber] }}
       </div>
-      <div className="answerChoices">
-        <li v-for="choices in answerChoices[questionNumber]">
-          {{ choices }}
-        </li>
+      <div
+        className="answerChoices"
+        v-for="answers in answerChoices[questionNumber]"
+      >
+        <label>
+          <input
+            type="radio"
+            name="currentQuestion"
+            :value="answers"
+            v-model="choice"
+          />{{ answers }}</label
+        >
       </div>
-      <button @click="onClick()">
+      <button v-if="!quizOver" @click="onClick()">
         Submit Answer
       </button>
+    </div>
+    <div v-if="quizOver" className="results">
+      <h3>Your answers:</h3>
+      <div v-for="(prompt, index) in prompts">
+        {{ prompt }} {{ answers[index] }}
+      </div>
     </div>
   </div>
 </template>
@@ -29,14 +49,17 @@ export default {
   },
   data() {
     return {
+      choice: null,
       prompts: [],
       answerChoices: [],
-      choice: "",
       answers: [],
-      answeredBool: false,
       quizStarted: false,
+      quizOver: false,
       questionNumber: 0,
     };
+  },
+  created() {
+    this.setQuestionsAndAnswers();
   },
   methods: {
     async setQuestionsAndAnswers() {
@@ -45,19 +68,21 @@ export default {
     },
     start() {
       this.quizStarted = true;
-      this.setQuestionsAndAnswers();
+      this.questionNumber = 0;
     },
     onClick() {
-      this.answeredBool = true;
-      if (!this.answeredBool) return;
+      if (this.choice === null) return;
+      this.answers.push(this.choice);
+      this.choice = null;
       this.questionNumber++;
-      this.answers = [...this.answers] + this.choice; // TODO plus selected
-      if (this.prompts.length == this.answers.length) this.showSummary();
+      if (this.prompts.length == this.answers.length) this.reset();
     },
     // Displays all questions and their respective answers, and the user's answers.
     /* The questions provided are subjective and not all of them have a correct 
     answer (nor is one provided), so we don't calculate a score based on accuracy*/
-    showSummary() {
+    reset() {
+      this.quizOver = true;
+      this.quizStarted = false;
       // questions
       // answers
       // users answers
@@ -65,8 +90,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-button:focus {
-  background: greenyellow;
-}
-</style>
+<style scoped></style>
