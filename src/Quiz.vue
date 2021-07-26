@@ -83,11 +83,14 @@ export default {
     reset() {
       this.quizOver = true;
       this.quizStarted = false;
-      // questions
-      // answers
-      // users answers
     },
   },
 };
+/* cognito blue: #00B3AB
+orange: #D85427
+gray: #D3DCE4
+header darker blue: #234652
+lime green: #AED136
+*/
 </script>
 <style scoped></style>
