@@ -1,12 +1,11 @@
 <template>
-  <div className="quiz">
-    <h1>Quiz App</h1>
+  <div className="container">
+    <h1>Quizio</h1>
     <h3>Hello, welcome to the Cognito Forms quiz!</h3>
     <p>
       To get started, click the 'Start quiz' button. You can't go back once
       you've answered a question.
     </p>
-    <br />
     <button v-if="!quizStarted" @click="start()">Start quiz</button>
     <div v-if="quizStarted">
       <div className="question">
@@ -82,15 +81,45 @@ export default {
     answer (nor is one provided), so we don't calculate a score based on accuracy*/
     reset() {
       this.quizOver = true;
-      this.quizStarted = false;
+      this.quizStarted = true;
     },
   },
 };
 /* cognito blue: #00B3AB
-orange: #D85427
+orange: #D85427 #b32a00
 gray: #D3DCE4
 header darker blue: #234652
 lime green: #AED136
 */
 </script>
-<style scoped></style>
+<style scoped>
+.container {
+}
+button {
+  font-size: 24px;
+  border-radius: 12px;
+  color: #b32a00;
+  font-family: "Newsreader", serif;
+  background-color: #d3dce4;
+}
+h3 {
+  font-size: 28px;
+  color: #234652;
+}
+h1 {
+  color: #00b3ab;
+  font-family: "Lobster", cursive;
+  font-size: 60px;
+}
+</style>
+
+<style>
+body {
+  margin-right: 8%;
+  margin-left: 8%;
+  text-align: center;
+  font-family: "Newsreader", serif;
+  font-size: 24px;
+  color: #234652;
+}
+</style>
