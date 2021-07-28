@@ -8,8 +8,9 @@
     </p>
     <button v-if="!quizStarted" @click="start()">Start quiz</button>
     <div v-if="quizStarted">
-      <div className="question">
-        {{ this.prompts[questionNumber] }}
+      <!-- v-if to make sure question at that index is not null/undefined-->
+      <div className="question" v-if="this.prompts[questionNumber]">
+        {{ `${questionNumber + 1}. ${this.prompts[questionNumber]}` }}
       </div>
       <div
         className="answerChoices"
@@ -95,12 +96,25 @@ lime green: #AED136
 <style scoped>
 .container {
 }
+.answerChoices {
+  padding: 20px;
+}
 button {
+  max-width: 40%;
+
   font-size: 24px;
-  border-radius: 12px;
-  color: #b32a00;
+  border-radius: 14px;
+  background-color: #aed136;
+  color: white;
+  border: 2px solid #234652;
+  opacity: 0.6;
   font-family: "Newsreader", serif;
-  background-color: #d3dce4;
+  padding: 10px 10px 10px 10px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  transition-duration: 0.4s;
+}
+button:hover {
+  opacity: 1;
 }
 h3 {
   font-size: 28px;
