@@ -9,10 +9,13 @@
     <button v-if="!quizStarted" @click="start()">
       Start quiz
     </button>
+    <!-- <div>
+      {{ displayQuestionsAndAnswers() }}
+    </div> -->
     <div v-if="quizStarted">
       <!-- v-if to make sure question at that index is not null/undefined-->
       <div className="question" v-if="this.prompts[questionNumber]">
-        {{ `${questionNumber + 1}. ${this.prompts[questionNumber]}` }}
+       {{ `${this.prompts[questionNumber]}` }}
       </div>
       <div
         className="answerChoices"
@@ -43,10 +46,24 @@
         Submit Answer
       </button>
     </div>
-    <div v-if="quizOver" className="results">
+    <div className="results" v-if="quizOver">
+      <!-- <span v-html="displayResults()"></span> -->
+      <!-- {{ showResults() }} -->
+      
       <h3>Your answers:</h3>
       <div v-for="(prompt, index) in prompts">
-        {{ prompt }} {{ answers[index] }}
+        <div className="prompt">
+          {{ prompt }}
+        </div>
+        <div className="answer" v-for="(answer, ndex) in answerChoices[index]">
+          <label class="a-choices">
+            <ul>
+              <li class="chosen" v-if="answerChoices[index][ndex] == answers[index]">{{answerChoices[index][ndex]}}</li>
+              <li v-else>{{answerChoices[index][ndex]}}</li>
+            </ul>
+          </label>
+        </div>
+        <br/>
       </div>
     </div>
   </div>
@@ -75,18 +92,61 @@ export default {
   created() {
     this.setQuestionsAndAnswers();
   },
+  // computed: {
+  //   showResults: function () {
+  //     return null
+  //   }
+  // },
   methods: {
     async setQuestionsAndAnswers() {
-      this.prompts = this.questions.map((prompt) => prompt.text);
+      this.prompts = this.questions.map((prompt, index) => `${index+1}. ${prompt.text}`);
       this.answerChoices = this.questions.map((choices) => choices.answers);
     },
     start() {
       this.quizStarted = true;
+      this.quizOver = false;
       this.questionNumber = 0;
     },
+    showResults() {
+      let question = [];
+      let currQuestion = [];
+      let prompt = '';
+      for(let i = 0; i < this.prompts.length; i++) {
+        prompt = this.prompts[i];
+        console.log(prompt)
+        currQuestion = [...currQuestion, `${prompt}`]
+        for(let j = 0; j < this.answerChoices[i].length; j++) {
+          console.log(this.answerChoices[i][j])
+          currQuestion = [...currQuestion, ]
+        }
+      }
+      return currQuestion;
+    },
+      /*
+      <div>
+      
+      <h3>Your answers:</h3>
+      <div v-for="(prompt, index) in prompts">
+        <div className="prompt">
+          {{ `${index+1}. ${prompt}` }}
+        </div>
+        <div className="answer" v-for="answers in answerChoices[index]">
+          <label class="a-choices">
+            <ul>
+              <li v-if="answers[index] == answerChoices[index]">equals</li>
+              <li v-else>not equals</li>
+            </ul>
+          </label>
+        </div>
+        <br/>
+      </div>
+      </div>
+
+      */ 
     submitAnswer() {
       if (this.choice == null) return;
-      this.answers.push(this.choice);
+      this.answers = [...this.answers, this.choice]
+      console.log(this.answers)
       this.choice = null;
       this.questionNumber++;
       if (this.prompts.length == this.answers.length) this.reset();
@@ -96,7 +156,7 @@ export default {
     answer (nor is one provided), so we don't calculate a score based on accuracy*/
     reset() {
       this.quizOver = true;
-      this.quizStarted = true;
+      this.quizStarted = false;
     },
   },
 };
@@ -152,72 +212,20 @@ label {
 .answerChoices {
   position: relative;
 }
+.chosen {
+  color: #b32a00;
+}
+.results {
+  position: left;
+}
+.prompt {
+
+}
+
+.answer {
+}
 /* Customize the label (the container) */
-.container {
 
-  display: block;
-  position: relative;
-  padding-left: -25px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* Create a custom radio button */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 450px;
-  height: 25px;
-  width: 25px;
-  background-color: #eee;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: #2196F3;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
-  top: 9px;
-  left: 9px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: white;
-}
 </style>
 
 <style>
