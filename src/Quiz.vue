@@ -9,13 +9,10 @@
     <button v-if="!quizStarted" @click="start()">
       Start quiz
     </button>
-    <!-- <div>
-      {{ displayQuestionsAndAnswers() }}
-    </div> -->
     <div v-if="quizStarted">
       <!-- v-if to make sure question at that index is not null/undefined-->
       <div className="question" v-if="this.prompts[questionNumber]">
-       {{ `${this.prompts[questionNumber]}` }}
+       {{ this.prompts[questionNumber] }}
       </div>
       <div
         className="answerChoices"
@@ -23,45 +20,31 @@
       >
         <label class="container">
           <input
-            class="radio__input"
             type="radio"
             name="currentQuestion"
             :value="answers"
             v-model="choice">
-          </input> <span class="checkmark"></span>
+          </input>
           {{ answers }}
         </label>
       </div>
       <button
-        v-if="choice == null && quizOver == false"
-        class="btn-unclickable"
-      >
-        Submit Answer
-      </button>
-      <button
-        v-if="choice != null && quizOver == false"
-        class="btn-clickable"
+        v-if="quizOver == false"
+        :class="{'btn-clickable': choice, 'btn-unclickable': !choice}"
         @click="submitAnswer"
       >
         Submit Answer
       </button>
     </div>
     <div className="results" v-if="quizOver">
-      <!-- <span v-html="displayResults()"></span> -->
-      <!-- {{ showResults() }} -->
-      
       <h3>Your answers:</h3>
       <div v-for="(prompt, index) in prompts">
         <div className="prompt">
           {{ prompt }}
         </div>
         <div className="answer" v-for="(answer, ndex) in answerChoices[index]">
-          <label class="a-choices">
-            <ul>
-              <li class="chosen" v-if="answerChoices[index][ndex] == answers[index]">{{answerChoices[index][ndex]}}</li>
-              <li v-else>{{answerChoices[index][ndex]}}</li>
-            </ul>
-          </label>
+          <a :style="{ color: '#b32a00'}" v-if="answerChoices[index][ndex] == answers[index]">{{answerChoices[index][ndex]}}</a>
+          <a v-else>{{answerChoices[index][ndex]}}</a>
         </div>
         <br/>
       </div>
@@ -92,61 +75,22 @@ export default {
   created() {
     this.setQuestionsAndAnswers();
   },
-  // computed: {
-  //   showResults: function () {
-  //     return null
-  //   }
-  // },
   methods: {
+    // break down questions into prompts and answerChoices
     async setQuestionsAndAnswers() {
       this.prompts = this.questions.map((prompt, index) => `${index+1}. ${prompt.text}`);
       this.answerChoices = this.questions.map((choices) => choices.answers);
     },
     start() {
+      if(this.quizStarted && !this.quizOver) return
       this.quizStarted = true;
       this.quizOver = false;
       this.questionNumber = 0;
+      this.answers = [];
     },
-    showResults() {
-      let question = [];
-      let currQuestion = [];
-      let prompt = '';
-      for(let i = 0; i < this.prompts.length; i++) {
-        prompt = this.prompts[i];
-        console.log(prompt)
-        currQuestion = [...currQuestion, `${prompt}`]
-        for(let j = 0; j < this.answerChoices[i].length; j++) {
-          console.log(this.answerChoices[i][j])
-          currQuestion = [...currQuestion, ]
-        }
-      }
-      return currQuestion;
-    },
-      /*
-      <div>
-      
-      <h3>Your answers:</h3>
-      <div v-for="(prompt, index) in prompts">
-        <div className="prompt">
-          {{ `${index+1}. ${prompt}` }}
-        </div>
-        <div className="answer" v-for="answers in answerChoices[index]">
-          <label class="a-choices">
-            <ul>
-              <li v-if="answers[index] == answerChoices[index]">equals</li>
-              <li v-else>not equals</li>
-            </ul>
-          </label>
-        </div>
-        <br/>
-      </div>
-      </div>
-
-      */ 
     submitAnswer() {
       if (this.choice == null) return;
       this.answers = [...this.answers, this.choice]
-      console.log(this.answers)
       this.choice = null;
       this.questionNumber++;
       if (this.prompts.length == this.answers.length) this.reset();
@@ -160,7 +104,8 @@ export default {
     },
   },
 };
-/* cognito blue: #00B3AB
+/* 
+cognito blue: #00B3AB
 orange: #D85427 #b32a00
 gray: #D3DCE4
 header darker blue: #D3DCE4
@@ -212,20 +157,6 @@ label {
 .answerChoices {
   position: relative;
 }
-.chosen {
-  color: #b32a00;
-}
-.results {
-  position: left;
-}
-.prompt {
-
-}
-
-.answer {
-}
-/* Customize the label (the container) */
-
 </style>
 
 <style>
